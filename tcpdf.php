@@ -4916,8 +4916,8 @@ class TCPDF {
 		if (!$this->pdfa_mode || ($this->pdfa_mode && $this->pdfa_version == 3)) {
 			if ((($opt['Subtype'] == 'FileAttachment') OR ($opt['Subtype'] == 'Sound')) AND (!TCPDF_STATIC::empty_string($opt['FS']))
 				AND (@TCPDF_STATIC::file_exists($opt['FS']) OR TCPDF_STATIC::isValidURL($opt['FS']))
-				AND (!isset($this->embeddedfiles[basename($opt['FS'])]))) {
-				$this->embeddedfiles[basename($opt['FS'])] = array('f' => ++$this->n, 'n' => ++$this->n, 'file' => $opt['FS']);
+				AND (!isset($this->embeddedfiles[($opt['FileName'] ?? basename($opt['FS']))]))) {
+					$this->embeddedfiles[($opt['FileName'] ?? basename($opt['FS']))] = array('f' => ++$this->n, 'n' => ++$this->n, 'filename' => ($opt['FileName'] ?? basename($opt['FS'])), 'file' => $opt['FS'], 'af' => (in_Array($opt['AF'] ?? null,['/Source','/Alternative']) ? $opt['AF'] : '/Source'));
 			}
 		}
 		// Add widgets annotation's icons
@@ -4955,7 +4955,7 @@ class TCPDF {
 					$out = $this->_getobj($filedata['f'])."\n";
 					$out .= '<</Type /Filespec /F '.$this->_datastring($filename, $filedata['f']);
 					$out .= ' /UF '.$this->_datastring($filename, $filedata['f']);
-					$out .= ' /AFRelationship /Source';
+					$out .= ' /AFRelationship '.$filedata['af']; // SnazzyBee replaced /Source by 'af'
 					$out .= ' /EF <</F '.$filedata['n'].' 0 R>> >>';
 					$out .= "\n".'endobj';
 					$this->_out($out);
@@ -8614,7 +8614,7 @@ class TCPDF {
 							if (!isset($pl['opt']['fs'])) {
 								break;
 							}
-							$filename = basename($pl['opt']['fs']);
+							$filename = $pl['opt']['filename'];
 							if (isset($this->embeddedfiles[$filename]['f'])) {
 								$annots .= ' /FS '.$this->embeddedfiles[$filename]['f'].' 0 R';
 								$iconsapp = array('Graph', 'Paperclip', 'PushPin', 'Tag');
