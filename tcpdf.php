@@ -4955,7 +4955,7 @@ class TCPDF {
 					$out = $this->_getobj($filedata['f'])."\n";
 					$out .= '<</Type /Filespec /F '.$this->_datastring($filename, $filedata['f']);
 					$out .= ' /UF '.$this->_datastring($filename, $filedata['f']);
-					$out .= ' /AFRelationship '.$filedata['af']; // SnazzyBee replaced /Source by 'af'
+					$out .= ' /AFRelationship '.$filedata['af']; // Replaced /Source by 'af'
 					$out .= ' /EF <</F '.$filedata['n'].' 0 R>> >>';
 					$out .= "\n".'endobj';
 					$this->_out($out);
